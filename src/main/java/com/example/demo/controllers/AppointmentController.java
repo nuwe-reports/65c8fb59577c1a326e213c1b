@@ -77,7 +77,7 @@ public class AppointmentController {
     public ResponseEntity<HttpStatus> deleteAllAppointments() {
 
         if (appointmentRepository.count() == 0) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
 
         appointmentRepository.deleteAll();

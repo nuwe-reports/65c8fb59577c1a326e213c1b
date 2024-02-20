@@ -1,32 +1,20 @@
 package com.example.demo;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-
 import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import java.time.LocalDateTime;
 import java.time.format.*;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-
 import com.example.demo.controllers.AppointmentController;
 import com.example.demo.repositories.*;
 import com.example.demo.entities.*;
@@ -108,7 +96,7 @@ class AppointmentControllerUnitTest{
 
 
 
-        List<Appointment> appointments = new ArrayList<Appointment>();
+        List<Appointment> appointments = new ArrayList<>();
         appointments.add(appointment);
         
         when(appointmentRepository.findAll()).thenReturn(appointments);
@@ -147,7 +135,7 @@ class AppointmentControllerUnitTest{
 
 
 
-        List<Appointment> appointments = new ArrayList<Appointment>();
+        List<Appointment> appointments = new ArrayList<>();
         appointments.add(appointment);
         
         when(appointmentRepository.findAll()).thenReturn(appointments);
@@ -160,7 +148,7 @@ class AppointmentControllerUnitTest{
     
     @Test
     void shouldGetNoAppointments() throws Exception{
-        List<Appointment> appointments = new ArrayList<Appointment>();
+        List<Appointment> appointments = new ArrayList<>();
         when(appointmentRepository.findAll()).thenReturn(appointments);
         mockMvc.perform(get("/api/appointments"))
                 .andExpect(status().isNoContent());
@@ -186,7 +174,7 @@ class AppointmentControllerUnitTest{
         Appointment appointment = new Appointment(patient, doctor, room, startsAt, finishesAt);
         Appointment appointment2 = new Appointment(patient2, doctor2, room, startsAt2, finishesAt2);
 
-        List<Appointment> appointments = new ArrayList<Appointment>();
+        List<Appointment> appointments = new ArrayList<>();
         appointments.add(appointment);
         appointments.add(appointment2);
 
@@ -239,13 +227,10 @@ class AppointmentControllerUnitTest{
         Room room = new Room("Dermatology");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
-        
         LocalDateTime startsAt= LocalDateTime.parse("19:00 24/04/2023", formatter);
-
         LocalDateTime finishesAt = LocalDateTime.parse("20:00 24/04/2023", formatter);
 
         Appointment appointment = new Appointment(patient, doctor, room, startsAt, finishesAt);
-
         appointment.setId(1);
 
         Optional<Appointment> opt = Optional.of(appointment);
@@ -254,10 +239,12 @@ class AppointmentControllerUnitTest{
         assertThat(opt.get().getId()).isEqualTo(appointment.getId());
         assertThat(appointment.getId()).isEqualTo(1);
 
-        when(appointmentRepository.findById(appointment.getId())).thenReturn(opt);
+//        when(appointmentRepository.findById(appointment.getId())).thenReturn(opt);
+        when(appointmentRepository.existsById(appointment.getId())).thenReturn(true);
+
+
         mockMvc.perform(delete("/api/appointments/" + appointment.getId()))
                 .andExpect(status().isOk());
-                
     }
 
     @Test
@@ -269,10 +256,11 @@ class AppointmentControllerUnitTest{
     }
 
     @Test
-    void shouldDeleteAllAppointments() throws Exception{
+    void shouldDeleteAllAppointments() throws Exception {
         mockMvc.perform(delete("/api/appointments"))
                 .andExpect(status().isOk());
-                
     }
+
+
 }
 
